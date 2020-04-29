@@ -1,104 +1,145 @@
-let penularan = 0.05; 
-let sembuh = 0.002; 
-let meninggal = 0.0001;
-let numberOfPeople = 100; 
-let diam = 20; 
-let SocialDistancing = 0.80; 
-
+let penularan = 0.5; //
+let sembuh = 0.001; //on each screen draw
+let meninggal = 0.0001; //on each screen draw
+let jumlahIndividu = 200; //jumlah individu
+let diam = 20; //menentukan diameter dari lingkaran yang merepresentasikan individu/orang
+let SocialDistancing = 0.8; //probabilitas individu bergerak
+let width=1000;//lebar layar
+let height=700;//tinggi layar
 
 let status = {
-  "unexposed": "#000000",
-  "infected": "#ff0000",
-  "immune": "#00B000",
-  "deceased": "#000090"
+  "sehat": "#000000",
+  "terinfeksi": "#ff0000",
+  "sembuh": "#00B000",
+  "meninggal": "#000090"
 };
-let people = [];
+let individu = [];
 
 function setup() {
-  createCanvas(1000, 700);
-  for (var i = 0; i < numberOfPeople; i++) {
-    people[i] = new Person(
-      i, 
-      random(width), 
-      random(height), 
-      random(-8, 8), 
-      random(-8, 8), 
-      
-      0,
-      (i > SocialDistancing * numberOfPeople), 
-      people 
+  createCanvas(width,height);
+  background(0);
+  for (var i = 0; i < jumlahIndividu; i++) {
+    individu[i] = new Orang(
+      i, //ID number
+      random(width), //start x coord
+      random(height), //start y coord
+      random(-8, 8), //start x velocity
+      random(-8, 8), //start y velocity
+      (i > SocialDistancing * jumlahIndividu), //moving?
+      individu //all the other balls
     );
   }
-  frameRate(60);
+  frameRate(120);
   mouseClicked();
 }
 
-
 function draw() {
-  background(150);
-
-  for (i = 0; i < numberOfPeople; i++) {
-    if (people[i].stat != "deceased") {
-      if (people[i].moving) {
-        people[i].move();
+  background(170);
+  for (i = 0; i < jumlahIndividu; i++) {
+    if (individu[i].stat != "meninggal") {
+      if (individu[i].moving) {
+        individu[i].move();
       }
-      people[i].collide();
+      individu[i].bertemu();
     }
-    if (people[i].stat == "infected") {
-      if (random() < sembuh) {
-        people[i].stat = "immune";
+    if (individu[i].stat == "terinfeksi") {
+      if (random() <sembuh) {
+        individu[i].stat = "sembuh";
       } else if (random() < meninggal) {
-        people[i].stat = "deceased";
+        individu[i].stat = "meninggal";
       }
     }
-    
-    people[i].display();
+    individu[i].display();
+    textSize(18);
+    stroke(0);
+    fill(255, 204, 0);
+    text("Terinfeksi = " + count() , 40, 20);
+    stroke(0);
+    fill(255, 204, 0);
+    text("Sembuh = "+ pulih() ,40,40);
+    stroke(0);
+    fill(255, 204, 0);
+    text("Belum Terpapar = "+ belumterpapar() ,40,60);
+    stroke(0);
+    fill(255, 204, 0);
+    text("Meninggal = "+ mati() ,40,80);
+    fill(255, 204, 0);
+    text("Social Distancing = "+ socialDistance() ,40,100);
+    textSize(20);
+    fill('red');
+    text("Running time "+ int(millis())/1000 +"s", 780, 20);
     var ctx = canvas.getContext("2d");
     ctx.font = "30px Arial";
-    ctx.fillText("Jumlah Terinfeksi: ", 60, 40);
-    ctx.fillText((count()), 300, 40);
-   }
-  if (count() == 0) {
+    ctx.fillText("COVID-19 Simulation ", 350, 40);
+  }
+  if (count()==0) {
     noLoop();
-
   }
 }
 
 function mouseClicked() {
-  var thisOne = floor(random(numberOfPeople));
-  people[thisOne].stat = "infected";
+  var thisOne = floor(random(jumlahIndividu));
+  individu[thisOne].stat = "terinfeksi";
 }
 
 function count() {
   var total = 0;
-  for (var i = 0; i < numberOfPeople; i++) {
-    if (people[i].stat == "infected") {
+  for (var i = 0; i < jumlahIndividu; i++) {
+    if (individu[i].stat == "terinfeksi") {
       total++;
     }
   }
   return total;
 }
-function date() {
-  var date = 0;
-  for (var i = 0; i < numberOfPeople; i++) {
-    if (count() != 0) {
-      date++;
+
+function pulih() {
+  var total = 0;
+  for (var i = 0; i < jumlahIndividu; i++) {
+    if (individu[i].stat == "sembuh") {
+      total++;
     }
   }
-  return date;
+  return total;
 }
 
+function mati() {
+  var total = 0;
+  for (var i = 0; i < jumlahIndividu; i++) {
+    if (individu[i].stat == "meninggal") {
+      total++;
+    }
+  }
+  return total;
+}
 
-class Person {
+function belumterpapar() {
+  var total = 0;
+  for (var i = 0; i < jumlahIndividu; i++) {
+    if (individu[i].stat == "sehat") {
+      total++;
+    }
+  }
+  return total;
+}
+function socialDistance() {
+  var total = 0;
+  for (var i = 0; i < jumlahIndividu+1; i++) {
+    if (i > SocialDistancing * jumlahIndividu) {
+      total++;
+    }
+  }
+  return total;
+}
+
+class Orang {
   constructor(
     id_ = 0,
     x_,
     y_,
     vx_ = random(-10, 10),
     vy_ = random(-10, 10),
-    day_,
     moving_ = true,
-    others_ = []) {
+    others_= []) {
     this.id = id_;
     this.x = x_;
     this.y = y_;
@@ -106,8 +147,7 @@ class Person {
     this.vy = vy_;
     this.moving = moving_;
     this.others = others_;
-    this.stat = "unexposed";
-    this.day = day_;
+    this.stat = "sehat";
   }
   move() {
     // rand=random();
@@ -129,22 +169,32 @@ class Person {
     if (this.y < 0 || this.y > height) {
       this.vy = -1 * this.vy;
     }
-    this.x += this.vx;
-    this.y += this.vy;
+    if (random()<=0.25){
+        this.x+= this.vx;
+    }
+    else if (random()<=0.50){
+        this.y-= this.vy;
+    }
+    else if (random()<=0.75){
+        this.x-= this.vx;
+    }
+    else {
+        this.y+= this.vy;
+    }
   }
 
-  collide() {
-    for (var i = this.id + 1; i < numberOfPeople; i++) {
+  bertemu() {
+    for (var i = this.id + 1; i < jumlahIndividu; i++) {
       var dx = this.others[i].x - this.x;
       var dy = this.others[i].y - this.y;
       var dist = sqrt(dx * dx + dy * dy);
-      if (dist < 0.71 * diam) {
+      if (dist < 0.5 * diam) {
         if (random() < penularan) {
-          if (this.stat == "infected" && this.others[i].stat == "unexposed") {
-            this.others[i].stat = "infected";
+          if (this.stat == "terinfeksi" && this.others[i].stat == "sehat") {
+            this.others[i].stat = "terinfeksi";
           }
-          if (this.stat == "unexposed" && this.others[i].stat == "infected") {
-            this.stat = "infected";
+          if (this.stat == "sehat" && this.others[i].stat == "terinfeksi") {
+            this.stat = "terinfeksi";
           }
         }
       }
