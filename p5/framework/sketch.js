@@ -21,12 +21,12 @@ function setup() {
   for (var i = 0; i < jumlahIndividu; i++) {
     individu[i] = new Orang(
       i, //ID number
-      random(width), //start x coord
-      random(height), //start y coord
-      random(-8, 8), //start x velocity
-      random(-8, 8), //start y velocity
-      (i > SocialDistancing * jumlahIndividu), //moving?
-      individu //all the other balls
+      random(width), //memulai koordinat x
+      random(height), //memulai koordinat y
+      random(-8, 8), //memulai kecepatan x
+      random(-8, 8), //memulai kecepatan y
+      (i > SocialDistancing * jumlahIndividu), //bergerak atau tidak
+      individu //individu yang lain
     );
   }
   frameRate(120);
@@ -131,7 +131,7 @@ function socialDistance() {
   return total;
 }
 
-class Orang {
+class Orang {//untuk membuat sebuah ellipse yang merepresentasikan orang/individu
   constructor(
     id_ = 0,
     x_,
