@@ -1,6 +1,6 @@
-let penularan = 0.5; //
-let sembuh = 0.001; //on each screen draw
-let meninggal = 0.0001; //on each screen draw
+let penularan = 0.05; //
+let sembuh = 0.0005; //on each screen draw
+let meninggal = 0.00004; //on each screen draw
 let jumlahIndividu = 200; //jumlah individu
 let diam = 20; //menentukan diameter dari lingkaran yang merepresentasikan individu/orang
 let SocialDistancing = 0.8; //probabilitas individu bergerak
