@@ -77,12 +77,12 @@ function draw() {
   }
 }
 
-function mouseClicked() {
+function mouseClicked() {//untuk menambahkan berapa orang yang terkena covid dengan mouseclicked
   var thisOne = floor(random(jumlahIndividu));
   individu[thisOne].stat = "terinfeksi";
 }
 
-function count() {
+function count() {//untuk menghitung real time berapa orang yang terinfeksi covid
   var total = 0;
   for (var i = 0; i < jumlahIndividu; i++) {
     if (individu[i].stat == "terinfeksi") {
@@ -92,7 +92,7 @@ function count() {
   return total;
 }
 
-function pulih() {
+function pulih() {//untuk menghitung real time berapa orang yang berhasil sembuh
   var total = 0;
   for (var i = 0; i < jumlahIndividu; i++) {
     if (individu[i].stat == "sembuh") {
@@ -102,7 +102,7 @@ function pulih() {
   return total;
 }
 
-function mati() {
+function mati() {//untuk menghitung real time berapa orang yang mati 
   var total = 0;
   for (var i = 0; i < jumlahIndividu; i++) {
     if (individu[i].stat == "meninggal") {
@@ -114,14 +114,14 @@ function mati() {
 
 function belumterpapar() {
   var total = 0;
-  for (var i = 0; i < jumlahIndividu; i++) {
+  for (var i = 0; i < jumlahIndividu; i++) {//untuk menghitung real time berapa orang yang belum terpapar
     if (individu[i].stat == "sehat") {
       total++;
     }
   }
   return total;
 }
-function socialDistance() {
+function socialDistance() {//untuk menghitung real time berapa orang yang melakukan social distancing
   var total = 0;
   for (var i = 0; i < jumlahIndividu+1; i++) {
     if (i > SocialDistancing * jumlahIndividu) {
@@ -163,12 +163,14 @@ class Orang {//untuk membuat sebuah ellipse yang merepresentasikan orang/individ
     // else{
     //     this.pos_y = pos_y + 1;
     // }
+    //membuat boundary agar class orang tidak keluar dari layar
     if (this.x < 0 || this.x > width) {
       this.vx = -1 * this.vx;
     }
     if (this.y < 0 || this.y > height) {
       this.vy = -1 * this.vy;
     }
+    //membangkitkan gerakan random walk
     if (random()<=0.25){
         this.x+= this.vx;
     }
@@ -183,7 +185,7 @@ class Orang {//untuk membuat sebuah ellipse yang merepresentasikan orang/individ
     }
   }
 
-  bertemu() {
+  bertemu() {//method untuk mengubah status individu jika bertemu dengan orang yang terinfeksi
     for (var i = this.id + 1; i < jumlahIndividu; i++) {
       var dx = this.others[i].x - this.x;
       var dy = this.others[i].y - this.y;
@@ -201,7 +203,7 @@ class Orang {//untuk membuat sebuah ellipse yang merepresentasikan orang/individ
     }
   }
 
-  display() {
+  display() {//method untuk menampilkan bola yang merepresentasikan sebagai individu
     fill(color(status[this.stat]));
     ellipse(this.x, this.y, diam / 2, diam / 2);
   }
